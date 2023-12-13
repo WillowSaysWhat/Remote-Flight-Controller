@@ -426,11 +426,12 @@ namespace _30051129_RemoteFlightController
             this.labelAltitudeGauge.BackColor = System.Drawing.Color.Transparent;
             this.labelAltitudeGauge.Font = new System.Drawing.Font("Disket Mono", 13.8F, System.Drawing.FontStyle.Bold);
             this.labelAltitudeGauge.ForeColor = System.Drawing.Color.SpringGreen;
-            this.labelAltitudeGauge.Location = new System.Drawing.Point(58, 124);
+            this.labelAltitudeGauge.Location = new System.Drawing.Point(45, 123);
             this.labelAltitudeGauge.Name = "labelAltitudeGauge";
-            this.labelAltitudeGauge.Size = new System.Drawing.Size(108, 27);
+            this.labelAltitudeGauge.Size = new System.Drawing.Size(44, 27);
             this.labelAltitudeGauge.TabIndex = 17;
-            this.labelAltitudeGauge.Text = "000000";
+            this.labelAltitudeGauge.Text = "00";
+            this.labelAltitudeGauge.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pictureBoxSpeed
             // 
@@ -478,11 +479,12 @@ namespace _30051129_RemoteFlightController
             this.labelSpeedGauge.BackColor = System.Drawing.Color.Transparent;
             this.labelSpeedGauge.Font = new System.Drawing.Font("Disket Mono", 13.8F, System.Drawing.FontStyle.Bold);
             this.labelSpeedGauge.ForeColor = System.Drawing.Color.SpringGreen;
-            this.labelSpeedGauge.Location = new System.Drawing.Point(270, 121);
+            this.labelSpeedGauge.Location = new System.Drawing.Point(265, 123);
             this.labelSpeedGauge.Name = "labelSpeedGauge";
-            this.labelSpeedGauge.Size = new System.Drawing.Size(108, 27);
+            this.labelSpeedGauge.Size = new System.Drawing.Size(44, 27);
             this.labelSpeedGauge.TabIndex = 22;
-            this.labelSpeedGauge.Text = "000000";
+            this.labelSpeedGauge.Text = "00";
+            this.labelSpeedGauge.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // labelPitchGauge
             // 
@@ -490,11 +492,12 @@ namespace _30051129_RemoteFlightController
             this.labelPitchGauge.BackColor = System.Drawing.Color.Transparent;
             this.labelPitchGauge.Font = new System.Drawing.Font("Disket Mono", 13.8F, System.Drawing.FontStyle.Bold);
             this.labelPitchGauge.ForeColor = System.Drawing.Color.SpringGreen;
-            this.labelPitchGauge.Location = new System.Drawing.Point(488, 123);
+            this.labelPitchGauge.Location = new System.Drawing.Point(482, 123);
             this.labelPitchGauge.Name = "labelPitchGauge";
-            this.labelPitchGauge.Size = new System.Drawing.Size(108, 27);
+            this.labelPitchGauge.Size = new System.Drawing.Size(44, 27);
             this.labelPitchGauge.TabIndex = 23;
-            this.labelPitchGauge.Text = "000000";
+            this.labelPitchGauge.Text = "00";
+            this.labelPitchGauge.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // labelEpitchGauge
             // 
@@ -503,11 +506,12 @@ namespace _30051129_RemoteFlightController
             this.labelEpitchGauge.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.labelEpitchGauge.Font = new System.Drawing.Font("Disket Mono", 13.8F, System.Drawing.FontStyle.Bold);
             this.labelEpitchGauge.ForeColor = System.Drawing.Color.SpringGreen;
-            this.labelEpitchGauge.Location = new System.Drawing.Point(57, 315);
+            this.labelEpitchGauge.Location = new System.Drawing.Point(50, 312);
             this.labelEpitchGauge.Name = "labelEpitchGauge";
-            this.labelEpitchGauge.Size = new System.Drawing.Size(110, 29);
+            this.labelEpitchGauge.Size = new System.Drawing.Size(30, 29);
             this.labelEpitchGauge.TabIndex = 24;
-            this.labelEpitchGauge.Text = "000000";
+            this.labelEpitchGauge.Text = "0";
+            this.labelEpitchGauge.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // labelVertSpeedGauge
             // 
@@ -515,11 +519,12 @@ namespace _30051129_RemoteFlightController
             this.labelVertSpeedGauge.BackColor = System.Drawing.Color.Transparent;
             this.labelVertSpeedGauge.Font = new System.Drawing.Font("Disket Mono", 13.8F, System.Drawing.FontStyle.Bold);
             this.labelVertSpeedGauge.ForeColor = System.Drawing.Color.SpringGreen;
-            this.labelVertSpeedGauge.Location = new System.Drawing.Point(272, 321);
+            this.labelVertSpeedGauge.Location = new System.Drawing.Point(265, 321);
             this.labelVertSpeedGauge.Name = "labelVertSpeedGauge";
-            this.labelVertSpeedGauge.Size = new System.Drawing.Size(108, 27);
+            this.labelVertSpeedGauge.Size = new System.Drawing.Size(44, 27);
             this.labelVertSpeedGauge.TabIndex = 25;
-            this.labelVertSpeedGauge.Text = "000000";
+            this.labelVertSpeedGauge.Text = "00";
+            this.labelVertSpeedGauge.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // labelThrottleGauge
             // 
@@ -527,11 +532,12 @@ namespace _30051129_RemoteFlightController
             this.labelThrottleGauge.BackColor = System.Drawing.Color.Transparent;
             this.labelThrottleGauge.Font = new System.Drawing.Font("Disket Mono", 13.8F, System.Drawing.FontStyle.Bold);
             this.labelThrottleGauge.ForeColor = System.Drawing.Color.SpringGreen;
-            this.labelThrottleGauge.Location = new System.Drawing.Point(488, 321);
+            this.labelThrottleGauge.Location = new System.Drawing.Point(482, 314);
             this.labelThrottleGauge.Name = "labelThrottleGauge";
-            this.labelThrottleGauge.Size = new System.Drawing.Size(108, 27);
+            this.labelThrottleGauge.Size = new System.Drawing.Size(44, 27);
             this.labelThrottleGauge.TabIndex = 26;
-            this.labelThrottleGauge.Text = "000000";
+            this.labelThrottleGauge.Text = "00";
+            this.labelThrottleGauge.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // dataGridViewControls
             // 
@@ -570,8 +576,9 @@ namespace _30051129_RemoteFlightController
             this.ButtonAutoPilot.Name = "ButtonAutoPilot";
             this.ButtonAutoPilot.Size = new System.Drawing.Size(165, 42);
             this.ButtonAutoPilot.TabIndex = 28;
-            this.ButtonAutoPilot.Text = "Auto Pilot";
+            this.ButtonAutoPilot.Text = "Autopilot";
             this.ButtonAutoPilot.UseVisualStyleBackColor = false;
+            this.ButtonAutoPilot.Click += new System.EventHandler(this.ButtonAutoPilot_Click);
             // 
             // labelAutoPilotActivation
             // 

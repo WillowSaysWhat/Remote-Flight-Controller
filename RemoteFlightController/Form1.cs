@@ -8,14 +8,14 @@ using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 // file handling (Blackbox).
-using System.IO; 
+using System.IO;
 // packages for needle colour fill.
 using System.Windows.Media;
-using System.Drawing;
 // package for creating the gauges.
 using LiveCharts.WinForms;
 using System.Reflection;
 using static _30051129_RemoteFlightController.RemoteFlightController;
+using System.Windows.Controls;
 
 
 
@@ -26,10 +26,9 @@ namespace _30051129_RemoteFlightController
 
         private TcpClient tcpClient;
         private    Thread listenThread;
-
+        private    Thread autopilotThread;
         // Initialise Delegates.
         private delegate void UpdateTelemetryDelegate( TelemetryUpdate telemObj );
-
         private delegate void UpdateWarningDelegate( int warning );
         private delegate void SendTelemetryDelegate( ControlsUpdate controls );
 
@@ -40,16 +39,19 @@ namespace _30051129_RemoteFlightController
 
         // Initialising telemetry guages.
         AngularGauge GaugeAltitude = new AngularGauge();
-           AngularGauge GaugeSpeed = new AngularGauge();
-           AngularGauge GaugePitch = new AngularGauge();
-          AngularGauge GaugeEpitch = new AngularGauge();
-          AngularGauge GaugeVspeed = new AngularGauge();
+        AngularGauge    GaugeSpeed = new AngularGauge();
+        AngularGauge    GaugePitch = new AngularGauge();
+        AngularGauge   GaugeEpitch = new AngularGauge();
+        AngularGauge   GaugeVspeed = new AngularGauge();
         AngularGauge GaugeThrottle = new AngularGauge();
 
         // time and date for blackbox.
         static DateTime now = DateTime.Now;
-        static string date = $"{now.Day}/{now.Month}/{now.Year}";
-        static string time = $"{now.Hour}:{now.Minute}:{now.Second}";
+        static string  date = $"{now.Day}/{now.Month}/{now.Year}";
+        static string  time = $"{now.Hour}:{now.Minute}:{now.Second}";
+
+        // bool for autopilot 
+        private bool autopilotOn = false;
 
         // Workaround suggested by intelisense.
         [Obsolete]
@@ -59,20 +61,23 @@ namespace _30051129_RemoteFlightController
         public RemoteFlightController()
         {
             InitializeComponent();
-            // finds the user's IP address and places it into the IP input field.
+            
+            // executes flight sim
             System.Diagnostics.Process.Start("C:\\Users\\will0\\Documents\\Yeat 2\\Event Driven Programming\\Assignment 2\\FlightSimulator.exe");
+            
+            // finds the user's IP address and places it into the IP input field.
             string hostname = Dns.GetHostName();
-            string IP = Dns.GetHostByName(hostname).AddressList[0].ToString();
-            textBoxIP.Text = IP;
+            string       IP = Dns.GetHostByName(hostname).AddressList[0].ToString();
+             textBoxIP.Text = IP;
 
             // Add events to their delegate.
             updateTelemetryDelegate += new UpdateTelemetryDelegate(UpdateTelemetryGauges);
-            updateWarningDelegate   += new UpdateWarningDelegate(updateWarnings);
-            sendTelemetry += new SendTelemetryDelegate(SendData);
+              updateWarningDelegate += new UpdateWarningDelegate(updateWarnings);
+                      sendTelemetry += new SendTelemetryDelegate(SendData);
 
             // Sets the Pitch label to its correct value.
-            labelEpitchDegrees.Text = trackBarPitch.Value.ToString();
-
+            labelEpitchDegrees.Text = trackBarPitch.Value.ToString() + "°";
+            labelThrottlePercent.Text = trackBarThrottle.Value.ToString() + "%";
             BuildNeedles();
         }
         
@@ -92,22 +97,23 @@ namespace _30051129_RemoteFlightController
         
             try
             {
-                IPAddress ip = IPAddress.Parse(textBoxIP.Text);
-                int port = Convert.ToInt32(textBoxPort.Text);
+                IPAddress ip = IPAddress.Parse( textBoxIP.Text );
+                int     port = Convert.ToInt32( textBoxPort.Text );
 
-                tcpClient.Connect(ip, port);
-                _ = MessageBox.Show($"Connected to: {ip}");
+                tcpClient.Connect( ip, port );
+                _ = MessageBox.Show( $"Connected to: {ip}" );
 
                 // writes to blackbox
-                using (StreamWriter sw = File.AppendText(CSVpath + "\\Blackbox.csv"))
+                using (StreamWriter sw = File.AppendText( CSVpath + "\\Blackbox.csv" ))
                 {
                     
-                    sw.WriteLine("\nRemote Flight Controller, Connected");
-                    sw.WriteLine($",{date},{time}");
+                    sw.WriteLine( "\nRemote Flight Controller, Connected" );
+                    sw.WriteLine( $",{date},{time}" );
 
                 }
 
-                labelConnectOrNot.Text = "Connected";               
+                labelConnectOrNot.Text = "Connected"; 
+                
                 listenThread = new Thread(new ThreadStart(ReceiveData));
                 listenThread.Start();
             }
@@ -123,15 +129,14 @@ namespace _30051129_RemoteFlightController
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        /// 
-
-        
+        ///         
         private void buttonDisconnect_Click(object sender, EventArgs e)
         {
             try
             {
                 listenThread?.Abort();
                     tcpClient.Close();
+
                  labelConnectOrNot.Text = "Disconnected";
             }
             catch (Exception)
@@ -143,7 +148,7 @@ namespace _30051129_RemoteFlightController
 
 
         /// <summary>
-        /// Close Button: runs Form1_FormClosing moethod and closes form.
+        /// Close Button: runs Form1_FormClosing method and closes form.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -169,14 +174,15 @@ namespace _30051129_RemoteFlightController
       
         private void TrackBar_Scroll(Object sender, EventArgs e)
         {
-            
-            ControlsUpdate controls = new ControlsUpdate();
 
+            ControlsUpdate controls = new ControlsUpdate
+            {
+                Throttle = trackBarThrottle.Value
+            };
+            labelThrottlePercent.Text = controls.Throttle.ToString() + "%";
             
-                    controls.Throttle = trackBarThrottle.Value;
-            labelThrottlePercent.Text = controls.Throttle.ToString(); 
                controls.ElevatorPitch = trackBarPitch.Value;
-              labelEpitchDegrees.Text = controls.ElevatorPitch.ToString();
+              labelEpitchDegrees.Text = controls.ElevatorPitch.ToString() + "°";
 
             updateDataGridViewControls(controls);
 
@@ -184,13 +190,46 @@ namespace _30051129_RemoteFlightController
             {
                 
                 this.Invoke(new SendTelemetryDelegate(SendData), new object[] { controls });
-                MessageBox.Show("here");
+               
             }
             else
             { 
                 sendTelemetry?.Invoke(controls);
             }
 
+        }
+
+        private void buttonHelp_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("   Remote Flight Controller Help\n" +
+                "1. Check that IP address & Port matches Flight Sim.\n" +
+                "2. Click 'Open Port' on Flight Sim.\n" +
+                "3. Click 'Connect' on Remote Flight Controller.\n" +
+                "4. A pop up will notify you of successful connection.\n" +
+                "5. Click 'Start Sim' to begin simulation.\n" +
+                "6. Use flight controls to fly the plane.\n" +
+                "\nMax Throttle and Elevation to take off.");
+        }
+
+        private void ButtonAutoPilot_Click(object sender, EventArgs e)
+        {
+            // Changes bool to the opposite value to its current value.
+            autopilotOn = !autopilotOn;
+
+            // ternery operator to change the text
+            // labelAutoPilotActivation.Text = autopilotOn ? "Enabled" : "Disabled";
+
+            if (autopilotOn) 
+            {
+                autopilotThread = new Thread(Autopilot);
+                autopilotThread.Start();
+            }
+            else 
+            {
+                autopilotThread.Abort();
+                
+            }
+            
         }
         #endregion Handlers
 
@@ -204,25 +243,14 @@ namespace _30051129_RemoteFlightController
         // Blueprint for receiving data from the Fight Simulator. Originally a Struct.
         public class TelemetryUpdate
         {
-            public double Altitude { get; set; } = Math.Min(0, 100000);
-            //Altitude in ft.
-            public double Speed { get; set; } = Math.Min(0, 1000);
-            //Plane's speed in Knts.
-            public double Pitch { get; set; } = Math.Min(-100, 100);
-            //Plane's pitch in degrees relative to horizon. Positive
-            //is planes pointing upwards, negative plane points
-            //downwards.
+            public double      Altitude { get; set; } = Math.Min(0, 100000);
+            public double         Speed { get; set; } = Math.Min(0, 1000);
+            public double         Pitch { get; set; } = Math.Min(-100, 100);
             public double VerticalSpeed { get; set; } = Math.Min(0, 1000);
-            //Plane's vertical speed in Feet per minute.
-            public double Throttle { get; set; } = Math.Min(0, 100);
-            //Current throttle setting as a percentage (i.e., 0% no
-            //throttle, 100% full throttle).
+            public double      Throttle { get; set; } = Math.Min(0, 100);
             public double ElevatorPitch { get; set; } = Math.Min(-5, 5);
-            //Current Elevator Pitch in degrees. Positive creates
-            //upwards lift, negative downwards.
-            public    int WarningCode { get; set; } = 0;
-            //Warning code: 0 - No Warnings; 1 - Too Low (less than
-            //1000ft); 2 - Stall.
+            public    int   WarningCode { get; set; } = 0;
+            
         }
 
         
@@ -250,7 +278,7 @@ namespace _30051129_RemoteFlightController
                         // serialises
 
                         JavaScriptSerializer serialiszer = new JavaScriptSerializer();
-                         TelemetryUpdate telemetryUpdate = serialiszer.Deserialize<TelemetryUpdate>(receivedData);
+                        TelemetryUpdate  telemetryUpdate = serialiszer.Deserialize<TelemetryUpdate>(receivedData);
 
 
                         // writes telemetry to blackbox.
@@ -298,12 +326,9 @@ namespace _30051129_RemoteFlightController
         // Blueprint for pilot controls. was a struct.
         public class ControlsUpdate
         {
-            public double Throttle      { get; set; } = 0;
-            //Current throttle setting as a percentage (i.e. 0% no
-            //throttle, 100% full throttle).
+            public double      Throttle { get; set; } = 0;
             public double ElevatorPitch { get; set; } = 0;
-            //Current Elevator Pitch in degrees. Positive creates
-            //upwards lift, negative downwards.
+            
         }
 
 
@@ -326,27 +351,15 @@ namespace _30051129_RemoteFlightController
             // sends
             stream.Write(buffer, 0, buffer.Length);
 
-            // updates blackbox
-            try
-            {
-                using (StreamWriter sw = File.AppendText(CSVpath + "\\Blackbox.csv"))
-                {
-                    sw.WriteLine("Remote Flight Controller");
-                    sw.WriteLine($",,{C.Throttle},{C.ElevatorPitch}");
-
-                }
-            }
-            catch
-            {
-                MessageBox.Show("Blackbox Malfunction");
-            }
+            updateDataGridViewControls(C);
+            
         }
         #endregion Receive and Send Data
 
 
 
 
-
+        #region Telemetry Updating
 
         // List of strings for warnings:                   0,           1,        2.
         List<string> warningList = new List<string> { "No Warning", "Low Alt", "Stalled" };
@@ -419,12 +432,12 @@ namespace _30051129_RemoteFlightController
         private void UpdateTelemetryGauges(TelemetryUpdate telemObj)
         {
 
-            labelAltitudeGauge.Text = telemObj.Altitude.ToString("F0");
-               labelSpeedGauge.Text = telemObj.Speed.ToString("F0");
-               labelPitchGauge.Text = telemObj.Pitch.ToString("F0");
-              labelEpitchGauge.Text = telemObj.ElevatorPitch.ToString("F0");
-           labelVertSpeedGauge.Text = telemObj.VerticalSpeed.ToString("F0");
-            labelThrottleGauge.Text = telemObj.Throttle.ToString("F0");
+            labelAltitudeGauge.Text = telemObj.Altitude.ToString("F2");
+               labelSpeedGauge.Text = telemObj.Speed.ToString("F2");
+               labelPitchGauge.Text = telemObj.Pitch.ToString("F2");
+              labelEpitchGauge.Text = telemObj.ElevatorPitch.ToString("F2");
+           labelVertSpeedGauge.Text = telemObj.VerticalSpeed.ToString("F2");
+            labelThrottleGauge.Text = telemObj.Throttle.ToString("F2");
 
             // makes controller trackbar match flight sim trackbars.
             trackBarPitch.Value = (int)telemObj.ElevatorPitch;
@@ -456,6 +469,8 @@ namespace _30051129_RemoteFlightController
               GaugeVspeed.Value = t.VerticalSpeed;
             GaugeThrottle.Value = t.Throttle;
         }
+        #endregion Telemetry Updating
+
         /// <summary>
         /// Method Holds all the code for building the needles.
         /// </summary>
@@ -568,16 +583,53 @@ namespace _30051129_RemoteFlightController
 
         }
 
-        private void buttonHelp_Click(object sender, EventArgs e)
+        
+        private void Autopilot()
         {
-            MessageBox.Show("   Remote Flight Controller Help\n" +
-                "1. Check that IP address & Port matches Flight Sim.\n" +
-                "2. Click 'Open Port' on Flight Sim.\n" +
-                "3. Click 'Connect' on Remote Flight Controller.\n" +
-                "4. A pop up will notify you of successful connection.\n" +
-                "5. Click 'Start Sim' to begin simulation.\n" +
-                "6. Use flight controls to fly the plane.\n" +
-                "\nMax Throttle and Elevation to take off.");
+            ControlsUpdate controls = new ControlsUpdate();
+            // you are building list to represent certain presets.
+            while (autopilotOn)
+            {
+                double altitude = double.Parse(labelAltitudeGauge.Text.ToString());
+                double    pitch = double.Parse(labelPitchGauge.Text.ToString());
+                double    speed = double.Parse(labelSpeedGauge.Text.ToString());
+
+                
+
+                List<List<double>> listOfLists = new List<List<double>>
+                {   
+                    //             criuse alt   pitch                                    
+                     new List<double> { 1000.0, 10.0, -10.0 }, new List<double> { 30.0, 40.0 , 1.0, -1.0 },
+                    //                                                         
+                };
+
+                if(altitude < listOfLists[0][0] && pitch < listOfLists[0][1])
+                {
+
+                }
+                else if()
+                {
+
+                }
+                
+
+                Thread.Sleep(2000);
+
+
+                if (this.InvokeRequired)
+                {
+
+                    this.Invoke(new SendTelemetryDelegate(SendData), new object[] { controls });
+
+                }
+                else
+                {
+                    sendTelemetry?.Invoke(controls);
+                }
+
+
+
+            }
         }
     }
 }
