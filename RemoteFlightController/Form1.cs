@@ -14,9 +14,8 @@ using System.Windows.Media;
 // package for creating the gauges.
 using LiveCharts.WinForms;
 using System.Reflection;
+using System.Linq;
 using static _30051129_RemoteFlightController.RemoteFlightController;
-using System.Windows.Controls;
-
 
 
 namespace _30051129_RemoteFlightController
@@ -26,7 +25,7 @@ namespace _30051129_RemoteFlightController
 
         private TcpClient tcpClient;
         private    Thread listenThread;
-        private    Thread autopilotThread;
+        // private    Thread autopilotThread;
         // Initialise Delegates.
         private delegate void UpdateTelemetryDelegate( TelemetryUpdate telemObj );
         private delegate void UpdateWarningDelegate( int warning );
@@ -46,12 +45,12 @@ namespace _30051129_RemoteFlightController
         AngularGauge GaugeThrottle = new AngularGauge();
 
         // time and date for blackbox.
-        static DateTime now = DateTime.Now;
-        static string  date = $"{now.Day}/{now.Month}/{now.Year}";
-        static string  time = $"{now.Hour}:{now.Minute}:{now.Second}";
+        //static DateTime now = DateTime.Now;
+        //static string  date = $"{now.Day}/{now.Month}/{now.Year}";
+        //static string  time = $"{now.Hour}:{now.Minute}:{now.Second}";
 
-        // bool for autopilot 
-        private bool autopilotOn = false;
+        
+        // private bool autopilotOn = false;
 
         // Workaround suggested by intelisense.
         [Obsolete]
@@ -102,15 +101,7 @@ namespace _30051129_RemoteFlightController
 
                 tcpClient.Connect( ip, port );
                 _ = MessageBox.Show( $"Connected to: {ip}" );
-
-                // writes to blackbox
-                using (StreamWriter sw = File.AppendText( CSVpath + "\\Blackbox.csv" ))
-                {
-                    
-                    sw.WriteLine( "\nRemote Flight Controller, Connected" );
-                    sw.WriteLine( $",{date},{time}" );
-
-                }
+                
 
                 labelConnectOrNot.Text = "Connected"; 
                 
@@ -177,14 +168,11 @@ namespace _30051129_RemoteFlightController
 
             ControlsUpdate controls = new ControlsUpdate
             {
-                Throttle = trackBarThrottle.Value
+                Throttle = trackBarThrottle.Value,
+                ElevatorPitch = trackBarPitch.Value
             };
-            labelThrottlePercent.Text = controls.Throttle.ToString() + "%";
-            
-               controls.ElevatorPitch = trackBarPitch.Value;
-              labelEpitchDegrees.Text = controls.ElevatorPitch.ToString() + "°";
 
-            updateDataGridViewControls(controls);
+            
 
             if (this.InvokeRequired)
             {
@@ -211,26 +199,29 @@ namespace _30051129_RemoteFlightController
                 "\nMax Throttle and Elevation to take off.");
         }
 
-        private void ButtonAutoPilot_Click(object sender, EventArgs e)
-        {
-            // Changes bool to the opposite value to its current value.
-            autopilotOn = !autopilotOn;
 
-            // ternery operator to change the text
-            // labelAutoPilotActivation.Text = autopilotOn ? "Enabled" : "Disabled";
+        // failed attempt at an autopilot
 
-            if (autopilotOn) 
-            {
-                autopilotThread = new Thread(Autopilot);
-                autopilotThread.Start();
-            }
-            else 
-            {
-                autopilotThread.Abort();
-                
-            }
+        //private void ButtonAutoPilot_Click(object sender, EventArgs e)
+        //{
+        //    // Changes bool to the opposite value to its current value.
+        //    autopilotOn = !autopilotOn;
+
+        //    // ternery operator to change the text
+        //    labelAutoPilotActivation.Text = autopilotOn ? "Enabled" : "Disabled";
             
-        }
+        //    if (autopilotOn) 
+        //    {
+        //        autopilotThread = new Thread(Autopilot);
+        //        autopilotThread.Start();
+        //    }
+        //    else 
+        //    {
+        //        autopilotThread.Abort();
+                
+        //    }
+            
+        //}
         #endregion Handlers
 
 
@@ -278,28 +269,8 @@ namespace _30051129_RemoteFlightController
                         // serialises
 
                         JavaScriptSerializer serialiszer = new JavaScriptSerializer();
-                        TelemetryUpdate  telemetryUpdate = serialiszer.Deserialize<TelemetryUpdate>(receivedData);
-
-
-                        // writes telemetry to blackbox.
-                        try
-                        {
-                            using (StreamWriter sw = File.AppendText(CSVpath + "\\Blackbox.csv"))
-                            {
-                                sw.WriteLine("Flight telemetry");
-                                sw.WriteLine(
-                                    $",,,{telemetryUpdate.Altitude}," +
-                                    $"{telemetryUpdate.Speed},{telemetryUpdate.Pitch}," +
-                                    $"{telemetryUpdate.VerticalSpeed},{telemetryUpdate.Throttle}," +
-                                    $"{telemetryUpdate.ElevatorPitch},{telemetryUpdate.WarningCode}"
-                                    );
-                            }
-                        }
-                        catch
-                        {
-                            MessageBox.Show("Blackbox Malfunction");
-                        }
-
+                        TelemetryUpdate  telemetryUpdate = serialiszer.Deserialize<TelemetryUpdate>(receivedData);                
+                       
 
                         // updates telemetry gauges and the warnings.
                         if (this.InvokeRequired)
@@ -310,7 +281,8 @@ namespace _30051129_RemoteFlightController
                         else
                         {
                             updateTelemetryDelegate?.Invoke(telemetryUpdate);
-                            updateWarningDelegate?.Invoke(telemetryUpdate.WarningCode); // This can be done on one delegeate;
+                            updateWarningDelegate?.Invoke(telemetryUpdate.WarningCode); 
+                            
 
                         }                        
                     }
@@ -352,7 +324,9 @@ namespace _30051129_RemoteFlightController
             stream.Write(buffer, 0, buffer.Length);
 
             updateDataGridViewControls(C);
-            
+            updateTrackBarLabels(C);
+           
+
         }
         #endregion Receive and Send Data
 
@@ -414,6 +388,12 @@ namespace _30051129_RemoteFlightController
                                            C.ElevatorPitch
                                           );
         }
+       
+        private void updateTrackBarLabels(ControlsUpdate C)
+        {
+                labelThrottlePercent.Text = C.Throttle.ToString() + "%";
+                  labelEpitchDegrees.Text = C.ElevatorPitch.ToString() + "°"; 
+        }
 
         /// <summary>
         /// Makes both Data grid Views continue to scroll with the latest telemetry row.
@@ -440,19 +420,16 @@ namespace _30051129_RemoteFlightController
             labelThrottleGauge.Text = telemObj.Throttle.ToString("F2");
 
             // makes controller trackbar match flight sim trackbars.
-            trackBarPitch.Value = (int)telemObj.ElevatorPitch;
+            trackBarPitch.Value    = (int)telemObj.ElevatorPitch;
             trackBarThrottle.Value = (int)telemObj.Throttle;
 
             UpdateNeedles(telemObj);
 
 
             updateDataGridView(telemObj);
+           
 
         }
-
-        // Finds the path of this project.
-        static string assemblyPath = Assembly.GetExecutingAssembly().Location;
-        string CSVpath = Path.GetDirectoryName(assemblyPath);
 
         
 
@@ -582,54 +559,117 @@ namespace _30051129_RemoteFlightController
             #endregion Invalidate
 
         }
-
         
-        private void Autopilot()
-        {
-            ControlsUpdate controls = new ControlsUpdate();
-            // you are building list to represent certain presets.
-            while (autopilotOn)
-            {
-                double altitude = double.Parse(labelAltitudeGauge.Text.ToString());
-                double    pitch = double.Parse(labelPitchGauge.Text.ToString());
-                double    speed = double.Parse(labelSpeedGauge.Text.ToString());
+        // failed attempt at a blackbox   
+        //private void updateBlackbox(TelemetryUpdate telemetry)
+        //{
+        //    SheetPath = SheetPath + "\\Blackbox.csv";
+
+        //    try
+        //    {
+        //        using (StreamWriter writer = File.AppendText(SheetPath))
+        //        {
+        //            writer.WriteLine(string.Join(",",date,time,telemetry.Altitude,telemetry.Pitch,telemetry.ElevatorPitch,telemetry.Speed,telemetry.VerticalSpeed,telemetry.Throttle));
+        //        }
 
                 
-
-                List<List<double>> listOfLists = new List<List<double>>
-                {   
-                    //             criuse alt   pitch                                    
-                     new List<double> { 1000.0, 10.0, -10.0 }, new List<double> { 30.0, 40.0 , 1.0, -1.0 },
-                    //                                                         
-                };
-
-                if(altitude < listOfLists[0][0] && pitch < listOfLists[0][1])
-                {
-
-                }
-                else if()
-                {
-
-                }
-                
-
-                Thread.Sleep(2000);
+        //    }
+        //    catch
+        //    {
+        //        MessageBox.Show("Blackbox Malfunction");
+        //    }
 
 
-                if (this.InvokeRequired)
-                {
+        //}
 
-                    this.Invoke(new SendTelemetryDelegate(SendData), new object[] { controls });
+      
 
-                }
-                else
-                {
-                    sendTelemetry?.Invoke(controls);
-                }
+        // failed attempt at an autopilot button
+        //private void Autopilot()
+        //{
+        //    ControlsUpdate controls = new ControlsUpdate();
+
+
+        //    while (autopilotOn)
+        //    {
+        //        double altitude = double.Parse(labelAltitudeGauge.Text.ToString());
+        //        double    pitch = double.Parse(labelPitchGauge.Text.ToString());
+        //        double    speed = double.Parse(labelSpeedGauge.Text.ToString());
 
 
 
-            }
-        }
+        //        List<List<double>> listOfLists = new List<List<double>>
+        //        {   
+        //            //               criuse alt   pitch                             Throttle     Elev Pitch       
+        //             new List<double> { 5000.0, 10.0, -10.0 }, new List<double> { 100.0, 3.0, -1.0 },
+        //            //                                                         
+        //        };
+        //           // if alt is greater than 5000
+        //        if(altitude > listOfLists[0][0])
+        //        {
+        //            if (pitch > listOfLists[0][1])
+        //            {
+        //                // drop pitch
+        //                controls.ElevatorPitch = listOfLists[1][2];
+        //                controls.Throttle = listOfLists[1][0];
+        //            }
+
+        //            else if (pitch < listOfLists[0][2])
+        //            {
+        //                // raises pitch
+        //                controls.ElevatorPitch = listOfLists[1][1];
+        //                controls.Throttle = listOfLists[1][0];
+        //            }
+        //        }
+        //        // of al is less than 5000
+        //        if(altitude <= listOfLists[0][0])
+        //        {
+        //            // if pitch is too high
+        //            if (pitch > listOfLists[0][1])
+        //                // drop pitch
+        //            {
+        //                controls.ElevatorPitch = listOfLists[1][2];
+        //                controls.Throttle = listOfLists[1][0];
+        //            }
+
+        //            else if (pitch < listOfLists[0][2])
+        //            {
+        //                controls.ElevatorPitch = listOfLists[1][1];
+        //                controls.Throttle = listOfLists[1][0];
+        //            }
+        //        }
+        //        if(altitude >= listOfLists[0][0])
+        //        {
+        //            if (pitch > listOfLists[0][1])
+        //            // drop pitch
+        //            {
+        //                controls.ElevatorPitch = listOfLists[1][2];
+        //                controls.Throttle = listOfLists[1][0];
+        //            }
+
+        //            else if (pitch < listOfLists[0][2])
+        //            {
+        //                controls.ElevatorPitch = listOfLists[1][1];
+        //                controls.Throttle = listOfLists[1][0];
+        //            }
+        //        }
+
+
+
+        //        if (this.InvokeRequired)
+        //        {
+
+        //            this.Invoke(new SendTelemetryDelegate(SendData), new object[] { controls });
+
+        //        }
+        //        else
+        //        {
+        //            sendTelemetry?.Invoke(controls);
+        //        }
+
+
+
+        //    }
+        //}
     }
 }

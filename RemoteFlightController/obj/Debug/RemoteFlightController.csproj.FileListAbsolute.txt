@@ -48,3 +48,4 @@ C:\Users\will0\Documents\GitHub\Remote-Flight-Controller\RemoteFlightController\
 C:\Users\will0\Documents\GitHub\Remote-Flight-Controller\RemoteFlightController\obj\Debug\RemoteFlightController.csproj.CopyComplete
 C:\Users\will0\Documents\GitHub\Remote-Flight-Controller\RemoteFlightController\obj\Debug\RemoteFlightController.exe
 C:\Users\will0\Documents\GitHub\Remote-Flight-Controller\RemoteFlightController\obj\Debug\RemoteFlightController.pdb
+C:\Users\will0\Documents\GitHub\Remote-Flight-Controller\RemoteFlightController\obj\Debug\RemoteFlightController.csproj.ResolveComReference.cache

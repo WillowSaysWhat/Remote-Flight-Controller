@@ -333,6 +333,7 @@ namespace _30051129_RemoteFlightController
             // 
             this.trackBarThrottle.BackColor = System.Drawing.Color.Black;
             this.trackBarThrottle.Cursor = System.Windows.Forms.Cursors.SizeNS;
+            this.trackBarThrottle.LargeChange = 1;
             this.trackBarThrottle.Location = new System.Drawing.Point(772, 59);
             this.trackBarThrottle.Maximum = 100;
             this.trackBarThrottle.Name = "trackBarThrottle";
@@ -349,6 +350,7 @@ namespace _30051129_RemoteFlightController
             // 
             this.trackBarPitch.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.trackBarPitch.Cursor = System.Windows.Forms.Cursors.SizeNS;
+            this.trackBarPitch.LargeChange = 1;
             this.trackBarPitch.Location = new System.Drawing.Point(904, 59);
             this.trackBarPitch.Maximum = 5;
             this.trackBarPitch.Minimum = -5;
@@ -552,6 +554,7 @@ namespace _30051129_RemoteFlightController
             this.dataGridViewControls.RowTemplate.Height = 24;
             this.dataGridViewControls.Size = new System.Drawing.Size(271, 474);
             this.dataGridViewControls.TabIndex = 27;
+            this.dataGridViewControls.RowsAdded += new System.Windows.Forms.DataGridViewRowsAddedEventHandler(this.dataGridViewTelemetry_RowsAdded);
             // 
             // ControlThrottle
             // 
@@ -570,6 +573,7 @@ namespace _30051129_RemoteFlightController
             // ButtonAutoPilot
             // 
             this.ButtonAutoPilot.BackColor = System.Drawing.Color.DarkRed;
+            this.ButtonAutoPilot.Enabled = false;
             this.ButtonAutoPilot.Font = new System.Drawing.Font("Disket Mono", 8.999999F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ButtonAutoPilot.ForeColor = System.Drawing.SystemColors.ButtonHighlight;
             this.ButtonAutoPilot.Location = new System.Drawing.Point(1087, 520);
@@ -578,7 +582,6 @@ namespace _30051129_RemoteFlightController
             this.ButtonAutoPilot.TabIndex = 28;
             this.ButtonAutoPilot.Text = "Autopilot";
             this.ButtonAutoPilot.UseVisualStyleBackColor = false;
-            this.ButtonAutoPilot.Click += new System.EventHandler(this.ButtonAutoPilot_Click);
             // 
             // labelAutoPilotActivation
             // 
