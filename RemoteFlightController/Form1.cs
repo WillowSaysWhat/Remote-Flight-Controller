@@ -49,13 +49,15 @@ namespace _30051129_RemoteFlightController
         //static string  date = $"{now.Day}/{now.Month}/{now.Year}";
         //static string  time = $"{now.Hour}:{now.Minute}:{now.Second}";
 
-        
+
         // private bool autopilotOn = false;
+        
 
         // Workaround suggested by intelisense.
         [Obsolete]
 
-        
+       
+
         // Constructor
         public RemoteFlightController()
         {
@@ -73,6 +75,9 @@ namespace _30051129_RemoteFlightController
             updateTelemetryDelegate += new UpdateTelemetryDelegate(UpdateTelemetryGauges);
               updateWarningDelegate += new UpdateWarningDelegate(updateWarnings);
                       sendTelemetry += new SendTelemetryDelegate(SendData);
+
+
+            ;
 
             // Sets the Pitch label to its correct value.
             labelEpitchDegrees.Text = trackBarPitch.Value.ToString() + "°";
@@ -559,7 +564,7 @@ namespace _30051129_RemoteFlightController
             #endregion Invalidate
 
         }
-        
+
         // failed attempt at a blackbox   
         //private void updateBlackbox(TelemetryUpdate telemetry)
         //{
@@ -572,7 +577,7 @@ namespace _30051129_RemoteFlightController
         //            writer.WriteLine(string.Join(",",date,time,telemetry.Altitude,telemetry.Pitch,telemetry.ElevatorPitch,telemetry.Speed,telemetry.VerticalSpeed,telemetry.Throttle));
         //        }
 
-                
+
         //    }
         //    catch
         //    {
@@ -582,7 +587,7 @@ namespace _30051129_RemoteFlightController
 
         //}
 
-      
+
 
         // failed attempt at an autopilot button
         //private void Autopilot()
@@ -671,5 +676,6 @@ namespace _30051129_RemoteFlightController
 
         //    }
         //}
+       
     }
 }
