@@ -50,8 +50,9 @@ namespace _30051129_RemoteFlightController
         //static string  time = $"{now.Hour}:{now.Minute}:{now.Second}";
 
 
-        // private bool autopilotOn = false;
-        
+        static string assemblyPath = Assembly.GetExecutingAssembly().Location;
+        string CSVpath = Path.GetDirectoryName(assemblyPath);
+
 
         // Workaround suggested by intelisense.
         [Obsolete]
@@ -274,8 +275,11 @@ namespace _30051129_RemoteFlightController
                         // serialises
 
                         JavaScriptSerializer serialiszer = new JavaScriptSerializer();
-                        TelemetryUpdate  telemetryUpdate = serialiszer.Deserialize<TelemetryUpdate>(receivedData);                
-                       
+                        TelemetryUpdate  telemetryUpdate = serialiszer.Deserialize<TelemetryUpdate>(receivedData);
+
+                        // writes to blackbox
+                        UpdateBlackbox(telemetryUpdate);
+
 
                         // updates telemetry gauges and the warnings.
                         if (this.InvokeRequired)
@@ -436,7 +440,32 @@ namespace _30051129_RemoteFlightController
 
         }
 
-        
+        // variables for date and time to use on the blackbox.
+        static DateTime now = DateTime.Now;
+        static string date = $"{now.Day}/{now.Month}/{now.Year}";
+        static string time = $"{now.Hour}:{now.Minute}:{now.Second}";
+
+        // writes the telemetry to a CSV file that is located in the \bin folder.
+        private void UpdateBlackbox(TelemetryUpdate telemetryUpdate)
+        {
+            try
+            {
+                using (StreamWriter sw = File.AppendText(CSVpath + "\\Blackbox.csv"))
+                {
+                    sw.WriteLine("Flight telemetry");
+                    sw.WriteLine(
+                        $"{date},{time},{telemetryUpdate.Altitude}," +
+                        $"{telemetryUpdate.Speed},{telemetryUpdate.Pitch}," +
+                        $"{telemetryUpdate.VerticalSpeed},{telemetryUpdate.Throttle}," +
+                        $"{telemetryUpdate.ElevatorPitch},{telemetryUpdate.WarningCode}"
+                        );
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Blackbox Malfunction");
+            }
+        }
 
         /// <summary>
         /// Updates the gauge value. it is this method that animates the needle.
@@ -565,30 +594,7 @@ namespace _30051129_RemoteFlightController
 
         }
 
-        // failed attempt at a blackbox   
-        //private void updateBlackbox(TelemetryUpdate telemetry)
-        //{
-        //    SheetPath = SheetPath + "\\Blackbox.csv";
-
-        //    try
-        //    {
-        //        using (StreamWriter writer = File.AppendText(SheetPath))
-        //        {
-        //            writer.WriteLine(string.Join(",",date,time,telemetry.Altitude,telemetry.Pitch,telemetry.ElevatorPitch,telemetry.Speed,telemetry.VerticalSpeed,telemetry.Throttle));
-        //        }
-
-
-        //    }
-        //    catch
-        //    {
-        //        MessageBox.Show("Blackbox Malfunction");
-        //    }
-
-
-        //}
-
-
-
+    
         // failed attempt at an autopilot button
         //private void Autopilot()
         //{
