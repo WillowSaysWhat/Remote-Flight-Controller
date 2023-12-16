@@ -79,10 +79,11 @@ Recognising the connection panels will help in the coming Operation/Use chapter.
 The second step of operation will only require the use of the Controls Panel, which consists of two controls: a throttle control and an elevation control. This allows the Operator to adjust the aircraft’s pitch and acceleration.
 The Controls Panel is located to the centre-right of the Remote Flight Controller (figure 2).
 Finally, to start the flight simulation, the Operator will need to locate the ‘Start Sim’ button. It can be found on figure 1 by using the following prompts:
-1.	Locate the Flight Simulator GUI (Light theme).
-2.	Locate the far-right gauge labelled ‘Vertical Speed’.
-3.	Locate the scenario dropdown box below the gauge labelled ‘None Selected’.
-4.	The ‘Start Sim’ button is directly below the dropdown box.
+1. Open FlightSimulator.exe located in this repository.
+2.	Locate the Flight Simulator GUI (Light theme).
+3.	Locate the far-right gauge labelled ‘Vertical Speed’.
+4.	Locate the scenario dropdown box below the gauge labelled ‘None Selected’.
+5.	The ‘Start Sim’ button is directly below the dropdown box.
    
 Prior knowledge of the control’s location will assist in minimising wait times during take-off.
 
