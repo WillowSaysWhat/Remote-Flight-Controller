@@ -21,7 +21,7 @@ using static _30051129_RemoteFlightController.RemoteFlightController;
 namespace _30051129_RemoteFlightController
 {
     public partial class RemoteFlightController : Form
-    {
+    {// NOTE: The blackbox CSV file is located in the bin file of this project.
 
         private TcpClient tcpClient;
         private    Thread listenThread;
@@ -65,7 +65,7 @@ namespace _30051129_RemoteFlightController
             InitializeComponent();
             
             // executes flight sim
-            System.Diagnostics.Process.Start("C:\\Users\\will0\\Documents\\Yeat 2\\Event Driven Programming\\Assignment 2\\FlightSimulator.exe");
+            
             
             // finds the user's IP address and places it into the IP input field.
             string hostname = Dns.GetHostName();
@@ -81,7 +81,7 @@ namespace _30051129_RemoteFlightController
             ;
 
             // Sets the Pitch label to its correct value.
-            labelEpitchDegrees.Text = trackBarPitch.Value.ToString() + "°";
+            labelEpitchDegrees.Text = trackBarPitch.Value.ToString() + "ï¿½";
             labelThrottlePercent.Text = trackBarThrottle.Value.ToString() + "%";
             BuildNeedles();
         }
@@ -401,7 +401,7 @@ namespace _30051129_RemoteFlightController
         private void updateTrackBarLabels(ControlsUpdate C)
         {
                 labelThrottlePercent.Text = C.Throttle.ToString() + "%";
-                  labelEpitchDegrees.Text = C.ElevatorPitch.ToString() + "°"; 
+                  labelEpitchDegrees.Text = C.ElevatorPitch.ToString() + "ï¿½"; 
         }
 
         /// <summary>
