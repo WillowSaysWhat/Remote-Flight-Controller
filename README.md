@@ -5,11 +5,23 @@
 
 ## Table of Contents
 * [Description of Software](#description-of-software)
+    * [Key Features](key-features)
 * [Software Elements](#software-elements)
 * [Understanding the User Interface](#understanding-the-user-interface)
 * [Operating Panels](#operating-panels)
-* [Operation/Use](#operation/Use)
-  
+    * [Connect](#connect)
+    * [Control](#control)
+* [Software Documentation](#software-documentation)
+  * [Setting up the Environment](#setting-up-the-environment)
+  * [The Code](#the-code)
+      * [Adding Components to the Software](#adding-components-to-the-software)
+  * [Writing the Code](#writing-the-code)
+    * [Threads](#threads)
+    * [Delegates and Events](#delegates-and-events)
+  * [Maintenance and Improvements](#maintenance-and-improvements)
+    * [How to Maintain the Software](#how-to-maintain-the-software)
+    * [Future Improvements](#future-improvements)
+    
 ## Description of Software
 The Remote Flight Controller is a simple interface that allows you to control a basic flight simulator via Internet Protocol (IP) connection. It is crafted for educational purposes and can be used as an example of event-driven and socket programming, demonstrating scalable techniques in beginner software development.
 #### Key Features
@@ -74,10 +86,10 @@ Finally, to start the flight simulation, the Operator will need to locate the �
    
 Prior knowledge of the control’s location will assist in minimising wait times during take-off.
 
-## Operation/Use 
+## Operation and Use 
 The Remote Flight Controller is a learning tool for novice C# programmers; therefore, no traditional installation method has not been created. All software files are available for use. This means that a level of competency is needed to setup and run the Controller. The operator will need to check whether the NuGet package is installed. The instructions for this can be found in Software Documentation. 
 
-### How to Run/Execute the Software
+
 #### Operational Environment
 The remote Flight Controller was built using Visual Studio and it is recommended that operators and programmers use Visual Studio when running the program. To simplify the coming instructions, open the folder that holds the Remote Flight Controller
 **open visual Studio**
@@ -138,7 +150,7 @@ Follow these steps to install the Live Charts NuGet package.
 
 The Live Charts NuGet package is now installed. This should solve any errors associated with the Angular Gauges on the Remote Flight Controller.
    
-## The Code
+### The Code
 #### Adding Components to the Software
 The Remote Flight Controller is completely open source therefore, improvements and new features are encouraged. However, implementation will need to follow Event-Driven programming paradigms. Here is a list of examples where programming rules may need to be adhered to:
 1.	Creating a loop to continuously monitor data will need to be executed via a Thread. For example, The Telemetry Object is created and populated via a while loop. If this was executed on the main thread, it would freeze the 
@@ -150,7 +162,7 @@ The Remote Flight Controller is completely open source therefore, improvements a
 New visual features added to the Graphical User Interface are welcomed. Therea are no restrictions on the positioning of new buttons and labels. The repositioning and optimisation of the current Graphical User Interface 
     feature is open to interpretation and any improvements will be committed to the main repository. 
 
-## Writing the Code
+### Writing the Code
 #### Threads
 Threads are an important part of graphical user interface design and event-driven programming. Without the option to create multiple threads, a GUI would suffer continuous inactivity. This would appear as if the graphical user interface has frozen. Threads are used to prevent this. 
 
@@ -199,3 +211,36 @@ event DoMathWithTwoInts addthis += new DoMathWithTwoInts(addIntegers);
 event DoMathWithTwoInts minusThis += new DoMathWithTwoInts(minusIntegers);
 event DoMathWithTwoInts multiplyThis += new DoMathWithTwoInts(multiplyIntegers);
 ```
+If there was no need to execute these sums individually. A single event could be initialised, and all delegates added to it. This would execute and print all results simultaneously. See below.
+```
+void invokeThis()
+{
+   addthis?.Invoke(1,2);
+   minusThis?.Invoke(1,2);
+   multiplyThis?.Invoke(1,2);
+}
+```
+## Maintenance and Improvements
+
+### How to maintain the Software
+The Remote Flight Controller is a simple application for novice programming; therefore, no maintenance is necessary. However, Visual Studio will require periodic updates. These notifications are found in the bottom-right corner of the editor. Updates are visualised by a bell icon with a red notification alert.
+
+![image](https://github.com/WillowSaysWhat/Remote-Flight-Controller/assets/126318401/b60d2b4e-ff36-46b1-ba91-39433cadd806)
+
+Figure 12: Visual Studio update notification
+The Live Charts NuGet package will also need to be monitored for any patches. The “Updates” tab is found to the right od the “Installed” tab. Updates are highlighted on the tab by a blue rectangle-shaped notification icon. Instructions to find the NuGet Package management window can be found in Software Documentation chapter.
+
+![image](https://github.com/WillowSaysWhat/Remote-Flight-Controller/assets/126318401/c28fc8c5-a7c0-4dc1-af86-3ec6870027ed)
+#### Future Improvements
+
+There are two major features that are to be added soon.
+1.	Blackbox recorder
+2.	Autopilot.
+3.	
+**Blackbox Recorder**
+The Blackbox will record the telemetry data to a CSV file that will be in the “bin” folder of this project. Each entry will have the date, time, and each item of telemetry data.  The Blackbox feature will not overwrite data history but append only.
+Update: the Blackbox has been implemented.
+
+**Autopilot**
+The button for the Autopilot is already visible on the Controller, however it is disabled until the autopilot can be fixed. It is currently crashing the aircraft. This will be improved in the coming updates.
+
