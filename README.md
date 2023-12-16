@@ -40,7 +40,7 @@ For detailed instructions on connecting and operating the simulator with the con
 
 ![image](https://github.com/WillowSaysWhat/Remote-Flight-Controller/assets/126318401/3d2f5dc8-4a37-4e86-82d0-c596be066885)
 
-## understanding the User Interface
+## Understanding the User Interface
 
 ![image](https://github.com/WillowSaysWhat/Remote-Flight-Controller/assets/126318401/cb8a634e-81d2-4cea-b9af-6389adecea4c)
 
